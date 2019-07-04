@@ -1,0 +1,15 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PresentationLayer.Models.Account
+{
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "Email not specified")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password not specified")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+    }
+}
