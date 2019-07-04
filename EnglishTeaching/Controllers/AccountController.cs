@@ -53,22 +53,20 @@ namespace EnglishTeaching.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    User user = await _context.Users
-            //        .Include(u => u.Role)
-            //        .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+            if (ModelState.IsValid)
+            {
+                User user = await _servicesmanager.AccountService.LoginUser(model);
 
-            //    if (user != null)
-            //    {
-            //        await Authenticate(user); 
+                if (user != null)
+                {
+                    await Authenticate(user);
 
-            //        return RedirectToAction("Index", "Home");
-            //    }
-            //    ModelState.AddModelError("", "Incorrect login or password");
-            //}
+                    return RedirectToAction("Index", "Home");
+                }
+                ModelState.AddModelError("", "Incorrect login or password");
+            }
             return View(model);
         }
 

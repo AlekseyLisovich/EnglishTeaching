@@ -47,9 +47,25 @@ namespace PresentationLayer.Services
             return null;
         }
 
-        //public async Task<User> LoginUser(LoginViewModel model)
-        //{
-        //    _loginManager.UsersRepository.
-        //}
+        public async Task<User> LoginUser(LoginViewModel model)
+        {
+            if (model != null)
+            {
+                try
+                {
+                    User user =  await _loginManager.UserRepository.GetUserWithCredentials(model.Email, model.Password);
+
+                    if (user != null)
+                        return user;
+                }
+                catch (Exception ex)
+                {
+                    //add logger
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            return null;
+        }
     }
 }
