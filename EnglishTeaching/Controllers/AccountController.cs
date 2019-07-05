@@ -16,7 +16,7 @@ namespace EnglishTeaching.Controllers
     {
         AccountService _accountService;
 
-        public AccountController(IUserRepository userRepository, IRoleRepository roleRepository)
+        public AccountController(IAsyncRepository<User> userRepository, IAsyncRepository<Role> roleRepository)
         {
             _accountService = new AccountService(userRepository, roleRepository);
         }

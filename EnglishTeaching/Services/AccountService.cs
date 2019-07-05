@@ -10,10 +10,10 @@ namespace EnglishTeaching.Services
 {
     public class AccountService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRoleRepository _roleRepository;
+        private readonly IAsyncRepository<User> _userRepository;
+        private readonly IAsyncRepository<Role> _roleRepository;
 
-        public AccountService(IUserRepository userRepository, IRoleRepository roleRepository)
+        public AccountService(IAsyncRepository<User> userRepository, IAsyncRepository<Role> roleRepository)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
@@ -21,7 +21,8 @@ namespace EnglishTeaching.Services
 
         public async Task<User> RegisterUser(RegisterViewModel model)
         {
-            User user = await _userRepository.GetByEmail(model.Email);
+            var userSpec = new UserWithItemsSpecification(model.Email);
+            var user = (await _userRepository.ListAsync(userSpec)).FirstOrDefault();
 
             if (user == null)
             {
@@ -33,7 +34,9 @@ namespace EnglishTeaching.Services
                         Password = model.Password
                     };
 
-                    Role userRole = await _roleRepository.GetByName("user");
+                    var roleSpec = new RoleWithEmailSpecification("user");
+                    var userRole = (await _roleRepository.ListAsync(roleSpec)).FirstOrDefault();
+
                     if (userRole != null)
                         user.Role = userRole;
 
@@ -56,7 +59,8 @@ namespace EnglishTeaching.Services
             {
                 try
                 {
-                    User user = await _userRepository.GetUserWithCredentials(model.Email, model.Password);
+                    var userSpec = new UserWithItemsSpecification(model.Email, model.Password);
+                    var user = (await _userRepository.ListAsync(userSpec)).FirstOrDefault();
 
                     if (user != null)
                         return user;
@@ -110,7 +114,8 @@ namespace EnglishTeaching.Services
             {
                 try
                 {
-                    User user = await _userRepository.GetByIdAsync(model.Id);
+                    var userSpec = new UserWithItemsSpecification(model.Id);
+                    var user = (await _userRepository.ListAsync(userSpec)).FirstOrDefault();
 
                     if (user != null)
                     {
@@ -118,6 +123,9 @@ namespace EnglishTeaching.Services
                         {
                             Id = model.Id,
                             Email = model.Email,
+                            Password = user.Password,
+                            Role = user.Role,
+                            RoleId = user.RoleId,
                             Name = model.Name,
                             Age = model.Age,
                             CellPhone = model.CellPhone,
