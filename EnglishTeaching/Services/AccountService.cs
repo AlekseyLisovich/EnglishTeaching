@@ -12,6 +12,7 @@ namespace EnglishTeaching.Services
     {
         private readonly IAsyncRepository<User> _userRepository;
         private readonly IAsyncRepository<Role> _roleRepository;
+        private readonly IAppLogger<User> _logger;
 
         public AccountService(IAsyncRepository<User> userRepository, IAsyncRepository<Role> roleRepository)
         {
@@ -21,6 +22,7 @@ namespace EnglishTeaching.Services
 
         public async Task<User> RegisterUser(RegisterViewModel model)
         {
+            _logger.LogInformation($"Registering the user");
             var userSpec = new UserWithItemsSpecification(model.Email);
             var user = (await _userRepository.ListAsync(userSpec)).FirstOrDefault();
 

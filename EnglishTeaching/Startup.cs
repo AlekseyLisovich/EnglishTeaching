@@ -1,6 +1,7 @@
 ﻿using BusinessLayer;
 using BusinessLayer.Implementations;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Logging;
 using DataLayer.DbContexts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +27,8 @@ namespace EnglishTeaching
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly("Domain")));
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+
+            services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
