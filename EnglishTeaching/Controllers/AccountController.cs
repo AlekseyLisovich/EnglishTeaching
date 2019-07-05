@@ -2,26 +2,23 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BusinessLayer;
+using BusinessLayer.Interfaces;
 using DataLayer.Entities.Account;
 using EnglishTeaching.Models.Account;
+using EnglishTeaching.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PresentationLayer;
-using PresentationLayer.Models.Account;
 
 namespace EnglishTeaching.Controllers
 {
     public class AccountController : Controller
     {
-        private LoginManager _loginManager;
-        private ServicesManager _servicesmanager;
+        AccountService _accountService;
 
-        public AccountController(LoginManager loginManager)
+        public AccountController(IUserRepository userRepository, IRoleRepository roleRepository)
         {
-            _loginManager = loginManager;
-            _servicesmanager = new ServicesManager(loginManager);
+            _accountService = new AccountService(userRepository, roleRepository);
         }
 
         [HttpGet]
@@ -35,7 +32,7 @@ namespace EnglishTeaching.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await _servicesmanager.AccountService.RegisterUser(model);
+                User user = await _accountService.RegisterUser(model);
 
                 await Authenticate(user);
 
@@ -46,18 +43,20 @@ namespace EnglishTeaching.Controllers
         
             return View(model);
         }
+
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = await _servicesmanager.AccountService.LoginUser(model);
+                User user = await _accountService.LoginUser(model);
 
                 if (user != null)
                 {
@@ -73,38 +72,17 @@ namespace EnglishTeaching.Controllers
         [HttpGet]
         public async Task<IActionResult> MyProfile()
         {
-            //UserProfile user = await _context.UserProfiles.FirstOrDefaultAsync(u => u.EmailAddress == User.Identity.Name);
+            var model = await _accountService.GetUserProfile(User.Identity.Name);
 
-            //UserProfileModel profileModel = new UserProfileModel
-            //{
-            //    Id = user.Id,
-            //    Email = user.EmailAddress,
-            //    Name = user.Name,
-            //    Age = user.Age,
-            //    CellPhone = user.CellPhone,
-            //    Company = user.Company
-            //};
-
-            return View(/*profileModel*/);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> MyProfile(UserProfileModel model)
+        public IActionResult MyProfile(UserProfileViewModel model)
         {
             if (ModelState.IsValid)
             {
-                //UserProfile profile = await _context.UserProfiles.FirstOrDefaultAsync(p => p.Id == model.Id);
-
-                //if(profile != null)
-                //{
-                //    profile.EmailAddress = model.Email;
-                //    profile.Name = model.Name;
-                //    profile.Age = model.Age;
-                //    profile.CellPhone = model.CellPhone;
-                //    profile.Company = model.Company;
-
-                //    await _context.SaveChangesAsync();
-                //}
+                _accountService.SaveUserProfile(model);
 
                 return View();
             } 

@@ -12,16 +12,13 @@ namespace EnglishTeaching.Controllers
 {
     public class HomeController : Controller
     {
-        private LoginManager _loginManager;
-        public HomeController(LoginManager loginManager)
+        public HomeController()
         {
-            _loginManager = loginManager;
         }
 
         [Authorize(Roles = "admin, user")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            //var phrases = await _loginManager.UsersRepository.GetAll();
             return View();
         }
 

@@ -2,7 +2,7 @@
 
 namespace EnglishTeaching.Models.Account
 {
-    public class UserProfileModel
+    public class UserProfileViewModel
     {
         public int Id { get; set; }
         [EmailAddress(ErrorMessage = "Invalid email address")]

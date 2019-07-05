@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PresentationLayer.Models.Account
+namespace EnglishTeaching.Models.Account
 {
     public class RegisterViewModel
     {
