@@ -37,6 +37,7 @@ namespace EnglishTeaching.Controllers
                 await Authenticate(user);
 
                 return RedirectToAction("Index", "Home");
+				//hello world
             }
             else
                 ModelState.AddModelError("", "Incorrect login or password");
